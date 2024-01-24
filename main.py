@@ -2,8 +2,8 @@ import wx
 import threading
 from app.gui.main_window import MainWindow
 from app.internal.common.web.web import app
-from app.internal.login.login import login  # 导入 login 模块以注册路由
-from app.internal.user.user import user  # 导入 user 模块以注册路由
+from app.internal.login import login  # 导入 login 模块以注册路由
+from app.internal.user import user  # 导入 user 模块以注册路由
 
 def run_gui():
     app = wx.App(False)
