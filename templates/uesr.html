@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Page</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: right; margin-top: 10px;">
+        <button onclick="logout()">登出</button>
+    </div>
+    <h1>用户信息</h1>
+    <input type="text" id="searchQuery" placeholder="输入用户名搜索">
+    <button onclick="fetchUsers()">搜索</button>
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>姓名</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function fetchUsers() {
+            const query = document.getElementById('searchQuery').value;
+            const token = localStorage.getItem('token'); // 从 localStorage 获取 token
+            fetch('/query_users?query=' + query, {
+                headers: {
+                    'Authorization': token
+                }
+            })
+            .then(response => response.json())
+            .then(users => {
+                const tbody = document.querySelector('#usersTable tbody');
+                tbody.innerHTML = ''; // 清空表格
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.textContent = user.name;
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function logout() {
+            const token = localStorage.getItem('token'); // Get the token
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Logout successful') {
+                    localStorage.removeItem('token'); // Remove the token from localStorage
+                    window.location.href = '/login'; // Redirect to the login page
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
